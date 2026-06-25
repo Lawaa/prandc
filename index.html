@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrandCenter Budapest — Prémium Társközvetítés</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#FAFAFA] text-gray-900 font-sans antialiased">
+
+    <nav class="border-b border-gray-100 bg-white/80 backdrop-blur sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+        <div class="text-xl font-serif tracking-wide cursor-pointer" onclick="navigateTo('landing')">PRANDCENTER <span class="text-xs tracking-widest text-amber-700 block md:inline md:ml-2">BUDAPEST</span></div>
+        <div>
+            <button onclick="openBookingModal()" class="bg-amber-800 hover:bg-amber-900 text-white text-xs uppercase tracking-widest px-5 py-2.5 rounded transition duration-300">Konzultáció foglalása</button>
+            <button onclick="navigateTo('admin-login')" class="text-xs text-gray-400 hover:text-gray-600 ml-4">Admin</button>
+        </div>
+    </nav>
+
+    <main id="landing-view" class="view-section">
+        <section class="max-w-5xl mx-auto px-6 py-20 text-center md:py-32">
+            <span class="text-xs uppercase tracking-widest text-amber-700 font-medium block mb-3">22 év szakértelem találkozik Budapesttel</span>
+            <h1 class="font-serif text-4xl md:text-6xl text-gray-900 leading-tight max-w-3xl mx-auto mb-6">
+                Elég volt a céltalan görgetésből? Találd meg az igazit Budapesten.
+            </h1>
+            <p class="text-gray-600 text-base md:text-lg max-w-xl mx-auto mb-10 font-light leading-relaxed">
+                Személyre szabott, diszkrét és manuális matchmaking azoknak a tudatos szingliknek, akik kiábrándultak a személytelen randiappokból.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button onclick="openBookingModal()" class="bg-gray-900 hover:bg-black text-white px-8 py-3.5 rounded text-sm tracking-wide font-medium transition">Díjmentes Koncepcióhívás</button>
+                <a href="#tradicio" class="border border-gray-300 hover:border-gray-900 text-gray-700 px-8 py-3.5 rounded text-sm tracking-wide font-medium transition flex items-center justify-center">Történetünk</a>
+            </div>
+        </section>
+
+        <section class="bg-white border-y border-gray-100 py-20 px-6">
+            <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="font-serif text-3xl md:text-4xl mb-6 text-gray-900">Miért nem működnek a randiappok?</h2>
+                    <p class="text-gray-600 font-light leading-relaxed mb-4">
+                        A modern appok algoritmusai nem a tartós kapcsolatokra, hanem a képernyő előtt tartásra vannak optimalizálva. A ghosting, a hamis profilok és a végtelen opciók illúziója kiábrándultságot szül.
+                    </p>
+                    <p class="text-gray-600 font-light leading-relaxed">
+                        Nálunk nincsenek algoritmusok. Minden tagunk ellenőrzött, valódi személy, akiket közös értékrend és preferenciák alapján, manuálisan kötünk össze.
+                    </p>
+                </div>
+                <div class="bg-[#FAFAFA] p-8 rounded border border-gray-100 space-y-6">
+                    <div class="flex gap-4">
+                        <div class="text-amber-700 font-serif text-xl">01</div>
+                        <div>
+                            <h4 class="font-medium mb-1">100% Diszkréció</h4>
+                            <p class="text-sm text-gray-500 font-light">Adatbázisunk zárt, profilod nem jelenik meg nyilvánosan sehol.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="text-amber-700 font-serif text-xl">02</div>
+                        <div>
+                            <h4 class="font-medium mb-1">Személyes Szűrés</h4>
+                            <p class="text-sm text-gray-500 font-light">Minden jelentkezővel konzultálunk, kiszűrve a komolytalanokat.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="text-amber-700 font-serif text-xl">03</div>
+                        <div>
+                            <h4 class="font-medium mb-1">Generációs Tapasztalat</h4>
+                            <p class="text-sm text-gray-500 font-light">22 év sikertörténetét és szakmai bázisát hozzuk el a fővárosba.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tradicio" class="max-w-4xl mx-auto px-6 py-25 text-center">
+            <h2 class="font-serif text-3xl md:text-4xl mb-6">A Szekszárdi Tradíciótól a Budapesti Jövőig</h2>
+            <p class="text-gray-600 font-light leading-relaxed max-w-2xl mx-auto italic">
+                "Édesanyám 22 éve alapította meg a PrandCentert Szekszárdon, és azóta több ezer pár egymásra találását kísérte végig. Ezt a személyes törődést, diszkrét és professzionális megközelítést hozom most el Budapestre, igazodva a mai fiatalok modern igényeihez."
+            </p>
+            <span class="block mt-4 text-sm font-medium text-amber-800 tracking-wider uppercase">— A budapesti iroda vezetője</span>
+        </section>
+    </main>
+
+    <div id="booking-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl p-6 md:p-8 relative">
+            <button onclick="closeBookingModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            
+            <h3 class="font-serif text-2xl md:text-3xl mb-2">Díjmentes Koncepcióhívás</h3>
+            <p class="text-sm text-gray-500 mb-6">Válassz egy időpontot, és válaszolj pár kérdésre az indításhoz.</p>
+
+            <form id="booking-form" class="space-y-6">
+                <div class="grid sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium uppercase tracking-wider text-gray-500 mb-1">Teljes név *</label>
+                        <input type="text" name="full_name" required class="w-full border-b border-gray-300 focus:border-amber-800 outline-none py-2 text-sm font-light">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium uppercase tracking-wider text-gray-500 mb-1">Telefonszám *</label>
+                        <input type="tel" name="phone" required class="w-full border-b border-gray-300 focus:border-amber-800 outline-none py-2 text-sm font-light">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium uppercase tracking-wider text-gray-500 mb-1">E-mail cím *</label>
+                        <input type="email" name="email" required class="w-full border-b border-gray-300 focus:border-amber-800 outline-none py-2 text-sm font-light">
+                    </div>
+                </div>
+
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium uppercase tracking-wider text-gray-500 mb-1">Életkor *</label>
+                        <input type="number" name="age" required min="18" max="100" class="w-full border-b border-gray-300 focus:border-amber-800 outline-none py-2 text-sm font-light">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium uppercase tracking-wider text-gray-500 mb-1">Kit keresel? *</label>
+                        <select name="target_gender" required class="w-full border-b border-gray-300 focus:border-amber-800 outline-none py-2 text-sm font-light bg-transparent">
+                            <option value="Nőt">Nőt keresek</option>
+                            <option value="Férfit">Férfit keresek</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium uppercase tracking-wider text-gray-500 mb-1">Mi a legnagyobb csalódásod a társkereső appokban? *</label>
+                    <input type="text" name="app_disappointment" required placeholder="Pl. ghosting, komolytalanság..." class="w-full border-b border-gray-300 focus:border-amber-800 outline-none py-2 text-sm font-light">
+                </div>
+
+                <div class="border-t border-gray-100 pt-4">
+                    <label class="block text-xs font-medium uppercase tracking-wider text-gray-500 mb-3 text-center">Válassz konzultációs időpontot</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <span class="block text-[11px] text-gray-400 mb-1 text-center">Nap</span>
+                            <div id="date-slots-container" class="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
+                                </div>
+                        </div>
+                        <div>
+                            <span class="block text-[11px] text-gray-400 mb-1 text-center">Óra/Perc</span>
+                            <div id="time-slots-container" class="grid grid-cols-2 gap-1 max-h-32 overflow-y-auto">
+                                </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center pt-4">
+                    <button type="submit" class="bg-amber-800 hover:bg-amber-900 text-white font-medium px-10 py-3.5 rounded text-sm tracking-wide transition w-full sm:w-auto">Foglalás Véglegesítése</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <main id="admin-login-view" class="view-section hidden max-w-md mx-auto px-6 py-24">
+        <div class="bg-white p-8 rounded border border-gray-100 shadow-sm">
+            <h2 class="font-serif text-2xl text-center mb-6">Adminisztrátori belépés</h2>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium uppercase tracking-wider text-gray-500 mb-1">E-mail</label>
+                    <input type="email" name="admin_email" required class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none focus:border-gray-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium uppercase tracking-wider text-gray-500 mb-1">Jelszó</label>
+                    <input type="password" name="admin_password" required class="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none focus:border-gray-900">
+                </div>
+                <button type="submit" class="w-full bg-gray-900 hover:bg-black text-white py-2.5 rounded text-sm font-medium transition">Belépés</button>
+            </form>
+            <button onclick="navigateTo('landing')" class="block text-center text-xs text-gray-400 hover:text-gray-600 mx-auto mt-4">Vissza a főoldalra</button>
+        </div>
+    </main>
+
+    <main id="admin-dashboard-view" class="view-section hidden max-w-6xl mx-auto px-6 py-12">
+        <div class="flex justify-between items-center mb-8 border-b border-gray-200 pb-4">
+            <div>
+                <h1 class="font-serif text-3xl">Budapesti Jelentkezők</h1>
+                <p class="text-sm text-gray-500">A beérkezett konzultációs foglalások listája.</p>
+            </div>
+            <button onclick="handleAdminLogout()" class="border border-red-200 hover:bg-red-50 text-red-600 text-xs uppercase tracking-wider px-4 py-2 rounded transition">Kijelentkezés</button>
+        </div>
+
+        <div class="bg-white rounded border border-gray-100 shadow-sm overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-100 text-xs uppercase tracking-wider text-gray-400 font-medium">
+                        <th class="p-4">Regisztrált</th>
+                        <th class="p-4">Név</th>
+                        <th class="p-4">Elérhetőség</th>
+                        <th class="p-4">Adatok</th>
+                        <th class="p-4">App csalódás</th>
+                        <th class="p-4">Konzultáció Időpontja</th>
+                    </tr>
+                </thead>
+                <tbody id="bookings-table-body">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer class="border-t border-gray-100 bg-white py-8 text-center text-xs text-gray-400 mt-20">
+        &copy; 2026 PrandCenter Budapest. Minden jog fenntartva. [cite: 3, 6, 30, 62]
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

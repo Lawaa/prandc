@@ -1,0 +1,25 @@
+/* Globális stílusok és egyedi font deklarációk */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.font-serif {
+    font-family: 'Cormorant Garamond', serif;
+}
+
+/* Egyoldalas nézetváltás animációmentes elrejtése */
+.hidden {
+    display: none !important;
+}
+
+/* Naptár görgetősávjainak finomítása */
+::-webkit-scrollbar {
+    width: 4px;
+}
+::-webkit-scrollbar-thumb {
+    background: #E5E7EB;
+    border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #D1D5DB;
+}
