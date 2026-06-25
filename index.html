@@ -14,10 +14,10 @@
 <body class="bg-[#FAFAFA] text-gray-900 font-sans antialiased">
 
     <nav class="border-b border-gray-100 bg-white/80 backdrop-blur sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
-        <div class="text-xl font-serif tracking-wide cursor-pointer" onclick="navigateTo('landing')">PRANDCENTER <span class="text-xs tracking-widest text-amber-700 block md:inline md:ml-2">BUDAPEST</span></div>
+        <div id="landing-button" class="text-xl font-serif tracking-wide cursor-pointer">PRANDCENTER <span class="text-xs tracking-widest text-amber-700 block md:inline md:ml-2">BUDAPEST</span></div>
         <div>
-            <button onclick="openBookingModal()" class="bg-amber-800 hover:bg-amber-900 text-white text-xs uppercase tracking-widest px-5 py-2.5 rounded transition duration-300">Konzultáció foglalása</button>
-            <button onclick="navigateTo('admin-login')" class="text-xs text-gray-400 hover:text-gray-600 ml-4">Admin</button>
+            <button id="booking-open-nav" class="bg-amber-800 hover:bg-amber-900 text-white text-xs uppercase tracking-widest px-5 py-2.5 rounded transition duration-300">Konzultáció foglalása</button>
+            <button id="admin-open" class="text-xs text-gray-400 hover:text-gray-600 ml-4">Admin</button>
         </div>
     </nav>
 
@@ -31,7 +31,7 @@
                 Személyre szabott, diszkrét és manuális matchmaking azoknak a tudatos szingliknek, akik kiábrándultak a személytelen randiappokból.
             </p>
             <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <button onclick="openBookingModal()" class="bg-gray-900 hover:bg-black text-white px-8 py-3.5 rounded text-sm tracking-wide font-medium transition">Díjmentes Koncepcióhívás</button>
+                <button id="booking-open-hero" class="bg-gray-900 hover:bg-black text-white px-8 py-3.5 rounded text-sm tracking-wide font-medium transition">Díjmentes Koncepcióhívás</button>
                 <a href="#tradicio" class="border border-gray-300 hover:border-gray-900 text-gray-700 px-8 py-3.5 rounded text-sm tracking-wide font-medium transition flex items-center justify-center">Történetünk</a>
             </div>
         </section>
@@ -84,7 +84,7 @@
 
     <div id="booking-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl p-6 md:p-8 relative">
-            <button onclick="closeBookingModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+            <button id="booking-close" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             
             <h3 class="font-serif text-2xl md:text-3xl mb-2">Díjmentes Koncepcióhívás</h3>
             <p class="text-sm text-gray-500 mb-6">Válassz egy időpontot, és válaszolj pár kérdésre az indításhoz.</p>
@@ -161,7 +161,7 @@
                 </div>
                 <button type="submit" class="w-full bg-gray-900 hover:bg-black text-white py-2.5 rounded text-sm font-medium transition">Belépés</button>
             </form>
-            <button onclick="navigateTo('landing')" class="block text-center text-xs text-gray-400 hover:text-gray-600 mx-auto mt-4">Vissza a főoldalra</button>
+            <button id="landing-button-login" class="block text-center text-xs text-gray-400 hover:text-gray-600 mx-auto mt-4">Vissza a főoldalra</button>
         </div>
     </main>
 
@@ -171,7 +171,7 @@
                 <h1 class="font-serif text-3xl">Budapesti Jelentkezők</h1>
                 <p class="text-sm text-gray-500">A beérkezett konzultációs foglalások listája.</p>
             </div>
-            <button onclick="handleAdminLogout()" class="border border-red-200 hover:bg-red-50 text-red-600 text-xs uppercase tracking-wider px-4 py-2 rounded transition">Kijelentkezés</button>
+            <button id="logout-button" class="border border-red-200 hover:bg-red-50 text-red-600 text-xs uppercase tracking-wider px-4 py-2 rounded transition">Kijelentkezés</button>
         </div>
 
         <div class="bg-white rounded border border-gray-100 shadow-sm overflow-x-auto">
@@ -196,6 +196,256 @@
         &copy; 2026 PrandCenter Budapest. Minden jog fenntartva. [cite: 3, 6, 30, 62]
     </footer>
 
-    <script src="app.js"></script>
+    <script>
+        // === 1. KONFIGURÁCIÓ & INICIALIZÁLÁS ===
+        // Cseréld ki a saját Supabase projekt adataidra, ha élesíteni akarod az adatbázist!
+        var SUPABASE_URL = "https://sjzfuitvypvaafihcmkf.supabase.co";
+        var SUPABASE_KEY = "sb_publishable_dOYUJ6oIMDWddhc3BsJbJg_TUrwinIQ";
+        var supabase = null;
+
+        if (window.supabase && typeof window.supabase.createClient === 'function' && SUPABASE_URL !== "https://YOUR_PROJECT_ID.supabase.co") {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        } else {
+            console.warn('Supabase client unavailable. Using mock local storage fallback.');
+        }
+
+        // === 2. ÁLLAPOTKEZELÉS (STATE) ===
+        const AppState = {
+            selectedDate: null,
+            selectedTime: null
+        };
+
+        // === 3. NAVIGÁCIÓ ÉS NÉZETEK KEZELÉSE ===
+        function navigateTo(viewName) {
+            document.querySelectorAll('.view-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            const targetView = document.getElementById(`${viewName}-view`);
+            if (targetView) {
+                targetView.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }
+
+            if (viewName === 'admin-dashboard') {
+                loadBookings();
+            }
+        }
+
+        // === 4. MODAL KEZELŐK ===
+        function openBookingModal() {
+            document.getElementById('booking-modal').classList.remove('hidden');
+            generateCalendarSlots();
+        }
+
+        function closeBookingModal() {
+            document.getElementById('booking-modal').classList.add('hidden');
+            AppState.selectedDate = null;
+            AppState.selectedTime = null;
+        }
+
+        // === 5. BEÉPÍTETT NAPTÁR GENERÁTOR LÓGIKA ===
+        function generateCalendarSlots() {
+            const dateContainer = document.getElementById('date-slots-container');
+            const timeContainer = document.getElementById('time-slots-container');
+
+            dateContainer.innerHTML = '';
+            timeContainer.innerHTML = '';
+
+            let addedDays = 0;
+            let daysCount = 0;
+
+            while (addedDays < 5) {
+                const date = new Date();
+                date.setDate(date.getDate() + daysCount + 1);
+                daysCount++;
+
+                if (date.getDay() !== 0 && date.getDay() !== 6) {
+                    const dateStr = date.toISOString().split('T')[0];
+                    const readableDate = date.toLocaleDateString('hu-HU', { month: 'short', day: 'numeric', weekday: 'short' });
+
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'date-slot-btn border border-gray-200 p-2 text-xs rounded hover:border-gray-900 transition text-center bg-white';
+                    btn.innerText = readableDate;
+                    btn.dataset.date = dateStr;
+                    btn.onclick = (e) => selectDateSlot(e, dateStr);
+
+                    dateContainer.appendChild(btn);
+                    addedDays++;
+                }
+            }
+
+            const hours = ['09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00'];
+            hours.forEach(time => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'time-slot-btn border border-gray-200 p-1.5 text-xs rounded hover:border-gray-900 transition text-center bg-white';
+                btn.innerText = time;
+                btn.dataset.time = time;
+                btn.onclick = (e) => selectTimeSlot(e, time);
+
+                timeContainer.appendChild(btn);
+            });
+        }
+
+        function selectDateSlot(e, dateStr) {
+            document.querySelectorAll('.date-slot-btn').forEach(b => b.classList.remove('bg-gray-900', 'text-white', 'border-gray-900'));
+            e.target.classList.add('bg-gray-900', 'text-white', 'border-gray-900');
+            AppState.selectedDate = dateStr;
+        }
+
+        function selectTimeSlot(e, timeStr) {
+            document.querySelectorAll('.time-slot-btn').forEach(b => b.classList.remove('bg-gray-900', 'text-white', 'border-gray-900'));
+            e.target.classList.add('bg-gray-900', 'text-white', 'border-gray-900');
+            AppState.selectedTime = timeStr;
+        }
+
+        // === 6. ADATBÁZIS MŰVELETEK (SUPABASE SERVICE) ===
+        async function saveBookingToDatabase(bookingData) {
+            if (!supabase) {
+                console.log("Mock mentés sikeres (Supabase nincs bekötve):", bookingData);
+                saveToLocalStorage(bookingData);
+                return { success: true };
+            }
+
+            const { data, error } = await supabase.from('bookings').insert([bookingData]);
+            if (error) return { success: false, error: error.message };
+            return { success: true };
+        }
+
+        async function getBookingsFromDatabase() {
+            if (!supabase) {
+                return JSON.parse(localStorage.getItem('mock_bookings') || '[]');
+            }
+
+            const { data, error } = await supabase.from('bookings').select('*').order('created_at', { ascending: false });
+            if (error) {
+                console.error(error);
+                return [];
+            }
+            return data;
+        }
+
+        function saveToLocalStorage(bookingData) {
+            const current = JSON.parse(localStorage.getItem('mock_bookings') || '[]');
+            bookingData.id = Date.now();
+            bookingData.created_at = new Date().toISOString();
+            current.push(bookingData);
+            localStorage.setItem('mock_bookings', JSON.stringify(current));
+        }
+
+        // === 7. ŰRLAP KEZELŐK ÉS VALIDÁCIÓ ===
+        async function handleBookingSubmit(e) {
+            e.preventDefault();
+
+            if (!AppState.selectedDate || !AppState.selectedTime) {
+                alert("Kérjük, válassz ki egy Napot és egy Időpontot is a konzultációhoz!");
+                return;
+            }
+
+            const form = e.target;
+            const bookingData = {
+                full_name: form.full_name.value,
+                phone: form.phone.value,
+                email: form.email.value,
+                age: parseInt(form.age.value),
+                target_gender: form.target_gender.value,
+                app_disappointment: form.app_disappointment.value,
+                booking_date: AppState.selectedDate,
+                booking_time: AppState.selectedTime
+            };
+
+            const response = await saveBookingToDatabase(bookingData);
+
+            if (response.success) {
+                alert("Köszönjük! A konzultációs időpontodat rögzítettük. Hamarosan keresni fogunk!");
+                form.reset();
+                closeBookingModal();
+            } else {
+                alert("Hiba történt a mentés során: " + response.error);
+            }
+        }
+
+        // === 8. ADMIN FUNKCIÓK ===
+        async function handleAdminLogin(e) {
+            e.preventDefault();
+            const email = e.target.admin_email.value;
+            const password = e.target.admin_password.value;
+
+            if (supabase) {
+                const { error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) {
+                    alert("Sikertelen belépés! Ellenőrizd az adatokat.");
+                    return;
+                }
+            } else {
+                if (email === "admin@parandcenter.hu" && password === "admin123") {
+                    console.log("Mock admin belépés sikeres.");
+                } else {
+                    alert("Teszt belépéshez használd: admin@parandcenter.hu / admin123");
+                    return;
+                }
+            }
+            navigateTo('admin-dashboard');
+        }
+
+        function handleAdminLogout() {
+            if (supabase) supabase.auth.signOut();
+            navigateTo('landing');
+        }
+
+        async function loadBookings() {
+            const bookings = await getBookingsFromDatabase();
+            const tableBody = document.getElementById('bookings-table-body');
+            tableBody.innerHTML = '';
+
+            if (bookings.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 text-sm">Még nincs beérkezett foglalás.</td></tr>`;
+                return;
+            }
+
+            bookings.forEach(booking => {
+                const row = document.createElement('tr');
+                row.className = "border-b border-gray-100 hover:bg-gray-50 text-sm text-gray-700";
+                row.innerHTML = `
+                    <td class="p-4 text-xs text-gray-400">${new Date(booking.created_at).toLocaleDateString('hu-HU')}</td>
+                    <td class="p-4 font-medium text-gray-900">${escapeHtml(booking.full_name)}</td>
+                    <td class="p-4 text-xs">${escapeHtml(booking.phone)}<br><span class="text-gray-400">${escapeHtml(booking.email)}</span></td>
+                    <td class="p-4">Kor: ${booking.age} | Keres: ${booking.target_gender}</td>
+                    <td class="p-4 text-xs italic text-gray-500 max-w-xs truncate" title="${escapeHtml(booking.app_disappointment)}">"${escapeHtml(booking.app_disappointment)}"</td>
+                    <td class="p-4 font-medium text-amber-900">${booking.booking_date} ${booking.booking_time}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        window.openBookingModal = openBookingModal;
+        window.closeBookingModal = closeBookingModal;
+        window.navigateTo = navigateTo;
+        window.handleAdminLogout = handleAdminLogout;
+
+        window.openBookingModal = openBookingModal;
+        window.closeBookingModal = closeBookingModal;
+        window.navigateTo = navigateTo;
+        window.handleAdminLogout = handleAdminLogout;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById('booking-open-nav').addEventListener('click', openBookingModal);
+            document.getElementById('booking-open-hero').addEventListener('click', openBookingModal);
+            document.getElementById('booking-close').addEventListener('click', closeBookingModal);
+            document.getElementById('admin-open').addEventListener('click', () => navigateTo('admin-login'));
+            document.getElementById('landing-button').addEventListener('click', () => navigateTo('landing'));
+            document.getElementById('landing-button-login').addEventListener('click', () => navigateTo('landing'));
+            document.getElementById('logout-button').addEventListener('click', handleAdminLogout);
+            document.getElementById('booking-form').addEventListener('submit', handleBookingSubmit);
+            document.getElementById('login-form').addEventListener('submit', handleAdminLogin);
+            console.log('Inline script loaded. Event listeners attached.');
+        });
+    </script>
 </body>
 </html>
